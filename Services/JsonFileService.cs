@@ -1,12 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
+using TaskTrackerCli.Models;
 
-namespace TaskTrackerCli.Services
+namespace TaskTrackerCli.Services;
+
+public class JsonFileService
 {
-    public class JsonFileService
+    private const string FilePath = "tasks.json";
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
-        
+        WriteIndented = true
+    };
+
+    public List<TaskItem> ReadTasks()
+    {
+        if (!File.Exists(FilePath))
+            return [];
+
+        var json = File.ReadAllText(FilePath);
+
+        if (string.IsNullOrWhiteSpace(json))
+            return [];
+
+        return JsonSerializer.Deserialize<List<TaskItem>>(json) ?? [];
+    }
+
+    public void WriteTasks(List<TaskItem> tasks)
+    {
+        var json = JsonSerializer.Serialize(tasks, _jsonOptions);
+        File.WriteAllText(FilePath, json);
     }
 }

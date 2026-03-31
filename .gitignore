@@ -3,6 +3,8 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+tasks.json
+
 # dotenv files
 .env
 
