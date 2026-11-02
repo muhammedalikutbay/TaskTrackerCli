@@ -11,4 +11,24 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
+  <!-- Packaging: installable as a global .NET tool (see README) -->
+  <PropertyGroup>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>task-cli</ToolCommandName>
+    <PackageId>TaskTrackerCli</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Muhammed Ali Kutbay</Authors>
+    <Description>A dependency-free command line task tracker: add, update, delete and list to-do items, mark them in progress or done, stored in a local JSON file.</Description>
+    <PackageTags>cli;task-tracker;todo;todo-list;task-manager;command-line;dotnet-tool;csharp;json;solid;productivity</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/muhammedalikutbay/TaskTrackerCli</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/muhammedalikutbay/TaskTrackerCli</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
 </Project>

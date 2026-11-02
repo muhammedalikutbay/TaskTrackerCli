@@ -1,0 +1,20 @@
+# Task Tracker CLI
+
+> A dependency-free command line to-do/task tracker written in C# (.NET 10). Add, update, delete and list tasks, mark them todo / in-progress / done. Tasks live in a tasks.json file in the current directory. MIT licensed. Installable as a .NET global tool (`task-cli`) or as a single-file binary from GitHub Releases.
+
+## Docs
+
+- [README](README.md): install, usage, JSON storage format, exit codes, architecture (SOLID, Command/Repository/Strategy patterns)
+- [Contributing](CONTRIBUTING.md): how to extend commands, filters and storage
+
+## Code map
+
+- [src/TaskTrackerCli/Domain](src/TaskTrackerCli/Domain): TaskItem, TodoStatus, TaskFilter, exceptions
+- [src/TaskTrackerCli/Application](src/TaskTrackerCli/Application): TaskService and ports (ITaskRepository, IClock)
+- [src/TaskTrackerCli/Infrastructure](src/TaskTrackerCli/Infrastructure): JSON file repository
+- [src/TaskTrackerCli/Cli](src/TaskTrackerCli/Cli): ICommand implementations, registry, composition root
+- [tests/TaskTrackerCli.Tests](tests/TaskTrackerCli.Tests): xUnit unit and end-to-end tests
+
+## Commands
+
+add, update, delete, mark-in-progress, mark-done, mark-todo, list [todo|in-progress|done|not-done], help

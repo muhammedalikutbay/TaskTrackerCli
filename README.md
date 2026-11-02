@@ -1,23 +1,39 @@
 # Task Tracker CLI
 
-A small command line app for tracking what you need to do, what you are working on, and what you have finished.
-Tasks are stored in a `tasks.json` file in the directory you run the command from (created automatically).
+[![CI](https://github.com/muhammedalikutbay/TaskTrackerCli/actions/workflows/ci.yml/badge.svg)](https://github.com/muhammedalikutbay/TaskTrackerCli/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![.NET 10](https://img.shields.io/badge/.NET-10-512BD4.svg)](https://dotnet.microsoft.com/download)
+[![Release](https://img.shields.io/github/v/release/muhammedalikutbay/TaskTrackerCli?include_prereleases)](https://github.com/muhammedalikutbay/TaskTrackerCli/releases)
+
+**A fast, dependency-free command line task tracker / to-do list manager for .NET.**
+Add, update and delete tasks, mark them *todo*, *in-progress* or *done*, and list them by status.
+Everything is stored in a plain, human-readable `tasks.json` file in the current directory.
+
+Keywords: cli, task tracker, to-do list, task manager, command line, C#, .NET, dotnet tool, JSON storage,
+clean architecture, SOLID, roadmap.sh task-tracker project.
 
 Built with **C# / .NET 10** and **no third-party libraries** – only the base class library (`System.Text.Json`, `System.IO`, ...).
 The test project uses xUnit, but the app itself has zero dependencies.
 
-## Getting started
+## Install
+
+Pick whichever fits you:
 
 ```bash
-# run directly from source
+# 1. As a .NET global tool (needs the .NET 10 SDK/runtime)
+#    Published to GitHub Packages; see the Packages tab of the repository.
+dotnet tool install --global TaskTrackerCli --add-source https://nuget.pkg.github.com/muhammedalikutbay/index.json
+
+# 2. Download a ready-made single-file binary (no .NET needed) for
+#    Linux, macOS or Windows from the Releases page:
+#    https://github.com/muhammedalikutbay/TaskTrackerCli/releases
+
+# 3. From source
+git clone https://github.com/muhammedalikutbay/TaskTrackerCli.git
+cd TaskTrackerCli
 dotnet run --project src/TaskTrackerCli -- add "Buy groceries"
-
-# or publish a build and use it as `task-cli`
-dotnet publish src/TaskTrackerCli -c Release -o ./publish
-./publish/task-cli list          # Windows: publish\task-cli.exe list
+dotnet publish src/TaskTrackerCli -c Release -o ./publish   # then use ./publish/task-cli
 ```
-
-Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 ## Usage
 
@@ -118,6 +134,10 @@ How the SOLID principles and patterns show up:
 * **Patterns** – Command (`ICommand`), Repository (`ITaskRepository`), Registry (`CommandRegistry`), Strategy
   (`TaskFilter` predicates), Factory method (`TaskItem.Create`, `MarkStatusCommand.Done(...)`), immutable value
   objects (`TaskItem` is a record; changes return a new instance).
+
+## Contributing & license
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Released under the [MIT License](LICENSE).
 
 ## Tests
 
