@@ -2,9 +2,19 @@ name: Release
 
 # Push a tag such as v1.0.0 to build binaries, publish a GitHub Release and
 # push the NuGet package to GitHub Packages (and nuget.org if NUGET_API_KEY is set).
+# If the release already exists (e.g. created in the web UI) the files are added to it.
+# Can also be started by hand from the Actions tab for an existing tag.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to release (e.g. v1.0.0)
+        required: true
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
 
 permissions:
   contents: write
@@ -15,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.TAG }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -29,6 +41,8 @@ jobs:
         rid: [linux-x64, linux-arm64, win-x64, osx-x64, osx-arm64]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.TAG }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -37,11 +51,11 @@ jobs:
           dotnet publish src/TaskTrackerCli --configuration Release
           --runtime ${{ matrix.rid }} --self-contained
           -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
-          -p:PackAsTool=false -p:DebugType=none -p:Version=${GITHUB_REF_NAME#v}
+          -p:PackAsTool=false -p:DebugType=none -p:Version=${TAG#v}
           --output publish/${{ matrix.rid }}
       - name: Archive
         run: |
-          name="task-cli-${GITHUB_REF_NAME}-${{ matrix.rid }}"
+          name="task-cli-${TAG}-${{ matrix.rid }}"
           cd publish/${{ matrix.rid }}
           if [[ "${{ matrix.rid }}" == win-* ]]; then
             zip "../../$name.zip" task-cli.exe
@@ -58,10 +72,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.TAG }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - run: dotnet pack src/TaskTrackerCli --configuration Release -p:Version=${GITHUB_REF_NAME#v} --output nupkg
+      - run: dotnet pack src/TaskTrackerCli --configuration Release -p:Version=${TAG#v} --output nupkg
       - uses: actions/upload-artifact@v4
         with:
           name: nupkg
@@ -72,6 +88,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.TAG }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
@@ -82,9 +100,12 @@ jobs:
       - name: GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >
-          gh release create "$GITHUB_REF_NAME" artifacts/*
-          --title "$GITHUB_REF_NAME" --generate-notes
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" artifacts/* --clobber
+          else
+            gh release create "$TAG" artifacts/* --title "$TAG" --generate-notes
+          fi
       - name: Push to GitHub Packages
         run: >
           dotnet nuget push "artifacts/*.nupkg"
